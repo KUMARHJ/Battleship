@@ -1,0 +1,75 @@
+public class Board {
+    private static final int BOARD_SIZE = 10;
+    private Ship[][] board;
+    
+    public Board() {
+      this.board = new Ship[BOARD_SIZE][BOARD_SIZE];
+    }
+    
+    public boolean placeShip(Ship ship, int row, int column) {
+      // Check if the position is valid
+      if (row < 0 || row >= BOARD_SIZE || column < 0 || column >= BOARD_SIZE) {
+        return false;
+      }
+      
+      // Check if there is already a ship at the position
+      if (board[row][column] != null) {
+        return false;
+      }
+      
+      // Check if the ship fits on the board
+      if (ship.isHorizontal()) {
+        if (column + ship.getSize() > BOARD_SIZE) {
+          return false;
+        }
+      } else {
+        if (row + ship.getSize() > BOARD_SIZE) {
+          return false;
+        }
+      }
+      
+      // Place the ship on the board
+      ship.setPosition(row, column);
+      if (ship.isHorizontal()) {
+        for (int i = 0; i < ship.getSize(); i++) {
+          board[row][column + i] = ship;
+        }
+      } else {
+        for (int i = 0; i < ship.getSize(); i++) {
+          board[row + i][column] = ship;
+        }
+      }
+      
+      return true;
+    }
+    
+    public boolean attack(int row, int column) {
+      // Check if the position is valid
+      if (row < 0 || row >= BOARD_SIZE || column < 0 || column >= BOARD_SIZE) {
+        return false;
+      }
+      
+      // Check if there is a ship at the position
+      Ship ship = board[row][column];
+      if (ship == null) {
+        return false;
+      }
+      
+      // Attack the ship
+      ship.hit();
+      
+      // Check if the ship is sunk
+      if (ship.isSunk()) {
+        for (int i = 0; i < BOARD_SIZE; i++) {
+          for (int j = 0; j < BOARD_SIZE; j++) {
+            if (board[i][j] == ship) {
+              board[i][j] = null;
+            }
+          }
+        }
+      }
+      
+      return true;
+    }
+  }
+  

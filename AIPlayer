@@ -1,0 +1,79 @@
+import java.util.Random;
+
+public class AIPlayer {
+  private Board board;
+  
+  public AIPlayer(Board board) {
+    this.board = board;
+  }
+  
+  public void placeShips() {
+    Random random = new Random();
+    
+    // Place the ships
+    for (int i = 1; i <= 5; i++) {
+      int row = random.nextInt(10);
+      int column = random.nextInt(10);
+      boolean isHorizontal = random.nextBoolean();
+      Ship ship = new Ship(i, isHorizontal, row, column);
+      if (!board.placeShip(ship, row, column)) {
+        i--;
+      }
+    }
+  }
+  
+  public void attack(Board enemyBoard) {
+    Random random = new Random();
+    
+    // Attack the enemy's board intelligently
+    int row = 0;
+    int column = 0;
+    boolean found = false;
+    for (int i = 0; i < 10; i++) {
+      for (int j = 0; j < 10; j++) {
+        if (enemyBoard.getHitStatus(i, j) == HitStatus.HIT) {
+          // Try to find a ship that was hit
+          if (i > 0 && enemyBoard.getHitStatus(i - 1, j) == HitStatus.UNKNOWN) {
+            // Try to attack the position above the hit
+            row = i - 1;
+            column = j;
+            found = true;
+            break;
+          }
+          if (i < 9 && enemyBoard.getHitStatus(i + 1, j) == HitStatus.UNKNOWN) {
+            // Try to attack the position below the hit
+            row = i + 1;
+            column = j;
+            found = true;
+            break;
+          }
+          if (j > 0 && enemyBoard.getHitStatus(i, j - 1) == HitStatus.UNKNOWN) {
+            // Try to attack the position to the left of the hit
+            row = i;
+            column = j - 1;
+            found = true;
+            break;
+          }
+          if (j < 9 && enemyBoard.getHitStatus(i, j + 1) == HitStatus.UNKNOWN) {
+            // Try to attack the position to the right of the hit
+            row = i;
+            column = j + 1;
+            found = true;
+            break;
+          }
+        }
+      }
+      if (found) {
+        break;
+      }
+    }
+    
+    if (!found) {
+      // If no hit was found, attack a random position
+      row = random.nextInt(10);
+      column = random.nextInt(10);
+    }
+    
+    enemyBoard.attack(row, column);
+  }
+}

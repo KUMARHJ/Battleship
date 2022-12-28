@@ -1,0 +1,38 @@
+import java.util.Scanner;
+
+public class HumanPlayer {
+  private Board board;
+  
+  public HumanPlayer(Board board) {
+    this.board = board;
+  }
+  
+  public void placeShips() {
+    Scanner scanner = new Scanner(System.in);
+    
+    // Place the ships
+    for (int i = 1; i <= 5; i++) {
+      System.out.println("Enter the position for your ship of size " + i + ":");
+      int row = scanner.nextInt();
+      int column = scanner.nextInt();
+      boolean isHorizontal = scanner.nextBoolean();
+      Ship ship = new Ship(i, isHorizontal, row, column);
+      if (!board.placeShip(ship, row, column)) {
+        System.out.println("Invalid position. Try again.");
+        i--;
+      }
+    }
+  }
+  
+  public void attack() {
+    Scanner scanner = new Scanner(System.in);
+    
+    // Attack the enemy's board
+    System.out.println("Enter the position to attack:");
+    int row = scanner.nextInt();
+    int column = scanner.nextInt();
+    if (!board.attack(row, column)) {
+      System.out.println("Invalid position. Try again.");
+    }
+  }
+}
